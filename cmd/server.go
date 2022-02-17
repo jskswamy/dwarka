@@ -2,9 +2,10 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/abronan/valkeyrie/store"
-	"github.com/abronan/valkeyrie/store/boltdb"
-	"github.com/abronan/valkeyrie/store/consul"
+
+	"github.com/kvtools/valkeyrie/store"
+	"github.com/kvtools/valkeyrie/store/boltdb"
+	"github.com/kvtools/valkeyrie/store/consul"
 	"github.com/spf13/cobra"
 	"gitlab.com/vedhabhavanam/smarthome/dwarka/pkg/api"
 	dwarkaStore "gitlab.com/vedhabhavanam/smarthome/dwarka/pkg/store"

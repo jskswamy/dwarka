@@ -4,7 +4,7 @@
 package mockKVStore
 
 import (
-	store "github.com/abronan/valkeyrie/store"
+	store "github.com/kvtools/valkeyrie/store"
 	gomock "github.com/golang/mock/gomock"
 	reflect "reflect"
 )

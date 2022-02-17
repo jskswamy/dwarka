@@ -3,13 +3,14 @@ package store
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/abronan/valkeyrie"
-	"github.com/abronan/valkeyrie/store"
+
+	"github.com/kvtools/valkeyrie"
+	"github.com/kvtools/valkeyrie/store"
 	"gitlab.com/vedhabhavanam/smarthome/dwarka/pkg/gateway"
 )
 
 //go:generate $PWD/scripts/mockgen $PWD/pkg/store/store.go $PWD/pkg/internal/mocks/store/store.go mockStore
-//go:generate $PWD/scripts/mockgen $PWD/vendor/github.com/abronan/valkeyrie/store/store.go $PWD/pkg/internal/mocks/valkeyrie/store/store.go mockKVStore
+//go:generate $PWD/scripts/mockgen $PWD/vendor/github.com/kvtools/valkeyrie/store/store.go $PWD/pkg/internal/mocks/valkeyrie/store/store.go mockKVStore
 
 // Store represents the backend for dwarka
 // Each store should support every call listed

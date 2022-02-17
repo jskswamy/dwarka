@@ -3,15 +3,16 @@ package store_test
 import (
 	"encoding/json"
 	"fmt"
-	libKVStore "github.com/abronan/valkeyrie/store"
+	"testing"
+
 	"github.com/golang/mock/gomock"
 	"github.com/google/go-cmp/cmp"
+	libKVStore "github.com/kvtools/valkeyrie/store"
 	"github.com/stretchr/testify/assert"
 	"gitlab.com/vedhabhavanam/smarthome/dwarka/pkg/gateway"
 	mockKVStore "gitlab.com/vedhabhavanam/smarthome/dwarka/pkg/internal/mocks/valkeyrie/store"
 	"gitlab.com/vedhabhavanam/smarthome/dwarka/pkg/store"
 	"gitlab.com/vedhabhavanam/smarthome/dwarka/pkg/testutils"
-	"testing"
 )
 
 func TestPersistentStore_Rooms(t *testing.T) {
