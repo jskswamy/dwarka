@@ -46,7 +46,7 @@ func loadBuildingAndBuildingFromContext(kvStore store.Store, ctx server.RequestC
 
 	building, ok := buildings[id]
 	if !ok {
-		return store.NotFound("unable to find building key in the context")
+		return store.NotFound("unable to find building in store")
 	}
 
 	ctx.SetUserValue(buildingsUserKey, buildings)
