@@ -1,0 +1,9 @@
+.vscode/
+
+pkg/
+build/
+bin/
+
+vendor/
+
+*.fasthttp.gz

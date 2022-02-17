@@ -1,0 +1,11 @@
+#! /usr/bin/env bash
+
+if [ "$#" -ne 3 ]; then
+  echo "Illegal number of parameters"
+  echo "mockgen <source> <destination> <package>"
+else
+  mkdir -p "$(dirname $2)"
+  mockgen -source $1 -destination $2 -package $3
+  sed -i .bak "2d" $2
+  rm $2.bak
+fi
