@@ -31,9 +31,8 @@ func badRequest(ctx server.RequestContext, err error) error {
 	return ctx.JSONResponse(map[string]string{"error": err.Error()}, fasthttp.StatusBadRequest)
 }
 
-func created(ctx server.RequestContext) error {
-	ctx.SetStatusCode(fasthttp.StatusCreated)
-	return nil
+func created(ctx server.RequestContext, id string) error {
+	return ctx.JSONResponse(map[string]string{"id": id}, fasthttp.StatusCreated)
 }
 
 func notFound(ctx server.RequestContext) error {

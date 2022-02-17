@@ -2,12 +2,13 @@ package api
 
 import (
 	"fmt"
+	"net/http"
+	"path"
+
 	"github.com/valyala/fasthttp"
 	"gitlab.com/vedhabhavanam/smarthome/dwarka/pkg/api/server"
 	"gitlab.com/vedhabhavanam/smarthome/dwarka/pkg/gateway"
 	"gitlab.com/vedhabhavanam/smarthome/dwarka/pkg/store"
-	"net/http"
-	"path"
 )
 
 const (
@@ -114,7 +115,7 @@ var createFloorHandler = func(store store.Store, ctx server.RequestContext) erro
 	if err != nil {
 		return internalServerError(ctx, err)
 	}
-	return created(ctx)
+	return created(ctx, floor.ID())
 }
 
 var getFloorHandler = func(store store.Store, ctx server.RequestContext) error {

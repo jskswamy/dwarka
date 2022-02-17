@@ -2,13 +2,14 @@ package api
 
 import (
 	"fmt"
+	"net/http"
+	"path"
+
 	"github.com/valyala/fasthttp"
 	"gitlab.com/vedhabhavanam/smarthome/dwarka/pkg/api/server"
 	"gitlab.com/vedhabhavanam/smarthome/dwarka/pkg/api/view"
 	"gitlab.com/vedhabhavanam/smarthome/dwarka/pkg/gateway"
 	"gitlab.com/vedhabhavanam/smarthome/dwarka/pkg/store"
-	"net/http"
-	"path"
 )
 
 const (
@@ -115,7 +116,7 @@ var createRoomHandler = func(store store.Store, ctx server.RequestContext) error
 	if err != nil {
 		return internalServerError(ctx, err)
 	}
-	return created(ctx)
+	return created(ctx, room.ID())
 }
 
 var getRoomHandler = func(store store.Store, ctx server.RequestContext) error {

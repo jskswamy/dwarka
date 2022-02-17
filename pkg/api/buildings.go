@@ -2,12 +2,13 @@ package api
 
 import (
 	"fmt"
+	"net/http"
+	"path"
+
 	"github.com/valyala/fasthttp"
 	"gitlab.com/vedhabhavanam/smarthome/dwarka/pkg/api/server"
 	"gitlab.com/vedhabhavanam/smarthome/dwarka/pkg/gateway"
 	"gitlab.com/vedhabhavanam/smarthome/dwarka/pkg/store"
-	"net/http"
-	"path"
 )
 
 const (
@@ -90,7 +91,7 @@ var createBuildingHandler = func(store store.Store, ctx server.RequestContext) e
 	if err != nil {
 		return internalServerError(ctx, err)
 	}
-	return created(ctx)
+	return created(ctx, building.ID())
 }
 
 var getBuildingHandler = func(store store.Store, ctx server.RequestContext) error {
