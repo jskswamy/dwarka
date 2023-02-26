@@ -18,7 +18,7 @@ const (
 )
 
 func floorPath() string {
-	return path.Join(floorsBasePath(), fmt.Sprintf(":%s", floorID))
+	return path.Join(floorsBasePath(), fmt.Sprintf("{%s}", floorID))
 }
 
 func floorsBasePath() string {

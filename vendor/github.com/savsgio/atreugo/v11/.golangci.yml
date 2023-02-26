@@ -1,0 +1,27 @@
+linters:
+  fast: false
+  enable-all: true
+  disable:
+    - gomnd
+    - gochecknoglobals
+    - testpackage
+    - goerr113
+    - exhaustivestruct
+    - paralleltest
+    - nolintlint
+    - cyclop
+    - varnamelen
+    - ireturn
+    - nonamedreturns
+    - exhaustruct
+
+    # Deprecated
+    - maligned
+    - scopelint
+    - golint
+    - interfacer
+    - structcheck
+    - varcheck
+    - nosnakecase
+    - ifshort
+    - deadcode

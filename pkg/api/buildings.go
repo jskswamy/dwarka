@@ -19,7 +19,7 @@ const (
 )
 
 func buildingPath() string {
-	return path.Join(buildingsBasePath, fmt.Sprintf(":%s", buildingID))
+	return path.Join(buildingsBasePath, fmt.Sprintf("{%s}", buildingID))
 }
 
 func init() {

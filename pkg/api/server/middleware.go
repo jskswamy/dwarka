@@ -2,7 +2,7 @@ package server
 
 import (
 	"fmt"
-	"github.com/savsgio/atreugo/v10"
+	"github.com/savsgio/atreugo/v11"
 	"time"
 )
 

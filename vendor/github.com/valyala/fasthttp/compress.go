@@ -101,7 +101,7 @@ func acquireRealGzipWriter(w io.Writer, level int) *gzip.Writer {
 	if v == nil {
 		zw, err := gzip.NewWriterLevel(w, level)
 		if err != nil {
-			panic(fmt.Sprintf("BUG: unexpected error from gzip.NewWriterLevel(%d): %s", level, err))
+			panic(fmt.Sprintf("BUG: unexpected error from gzip.NewWriterLevel(%d): %v", level, err))
 		}
 		return zw
 	}
@@ -127,14 +127,14 @@ var (
 //
 // Supported compression levels are:
 //
-//    * CompressNoCompression
-//    * CompressBestSpeed
-//    * CompressBestCompression
-//    * CompressDefaultCompression
-//    * CompressHuffmanOnly
+//   - CompressNoCompression
+//   - CompressBestSpeed
+//   - CompressBestCompression
+//   - CompressDefaultCompression
+//   - CompressHuffmanOnly
 func AppendGzipBytesLevel(dst, src []byte, level int) []byte {
 	w := &byteSliceWriter{dst}
-	WriteGzipLevel(w, src, level)
+	WriteGzipLevel(w, src, level) //nolint:errcheck
 	return w.b
 }
 
@@ -143,11 +143,11 @@ func AppendGzipBytesLevel(dst, src []byte, level int) []byte {
 //
 // Supported compression levels are:
 //
-//    * CompressNoCompression
-//    * CompressBestSpeed
-//    * CompressBestCompression
-//    * CompressDefaultCompression
-//    * CompressHuffmanOnly
+//   - CompressNoCompression
+//   - CompressBestSpeed
+//   - CompressBestCompression
+//   - CompressDefaultCompression
+//   - CompressHuffmanOnly
 func WriteGzipLevel(w io.Writer, p []byte, level int) (int, error) {
 	switch w.(type) {
 	case *byteSliceWriter,
@@ -177,7 +177,7 @@ func nonblockingWriteGzip(ctxv interface{}) {
 
 	_, err := zw.Write(ctx.p)
 	if err != nil {
-		panic(fmt.Sprintf("BUG: gzip.Writer.Write for len(p)=%d returned unexpected error: %s", len(ctx.p), err))
+		panic(fmt.Sprintf("BUG: gzip.Writer.Write for len(p)=%d returned unexpected error: %v", len(ctx.p), err))
 	}
 
 	releaseRealGzipWriter(zw, ctx.level)
@@ -223,14 +223,14 @@ func AppendGunzipBytes(dst, src []byte) ([]byte, error) {
 //
 // Supported compression levels are:
 //
-//    * CompressNoCompression
-//    * CompressBestSpeed
-//    * CompressBestCompression
-//    * CompressDefaultCompression
-//    * CompressHuffmanOnly
+//   - CompressNoCompression
+//   - CompressBestSpeed
+//   - CompressBestCompression
+//   - CompressDefaultCompression
+//   - CompressHuffmanOnly
 func AppendDeflateBytesLevel(dst, src []byte, level int) []byte {
 	w := &byteSliceWriter{dst}
-	WriteDeflateLevel(w, src, level)
+	WriteDeflateLevel(w, src, level) //nolint:errcheck
 	return w.b
 }
 
@@ -239,11 +239,11 @@ func AppendDeflateBytesLevel(dst, src []byte, level int) []byte {
 //
 // Supported compression levels are:
 //
-//    * CompressNoCompression
-//    * CompressBestSpeed
-//    * CompressBestCompression
-//    * CompressDefaultCompression
-//    * CompressHuffmanOnly
+//   - CompressNoCompression
+//   - CompressBestSpeed
+//   - CompressBestCompression
+//   - CompressDefaultCompression
+//   - CompressHuffmanOnly
 func WriteDeflateLevel(w io.Writer, p []byte, level int) (int, error) {
 	switch w.(type) {
 	case *byteSliceWriter,
@@ -273,7 +273,7 @@ func nonblockingWriteDeflate(ctxv interface{}) {
 
 	_, err := zw.Write(ctx.p)
 	if err != nil {
-		panic(fmt.Sprintf("BUG: zlib.Writer.Write for len(p)=%d returned unexpected error: %s", len(ctx.p), err))
+		panic(fmt.Sprintf("BUG: zlib.Writer.Write for len(p)=%d returned unexpected error: %v", len(ctx.p), err))
 	}
 
 	releaseRealDeflateWriter(zw, ctx.level)
@@ -342,6 +342,15 @@ func (r *byteSliceReader) Read(p []byte) (int, error) {
 	return n, nil
 }
 
+func (r *byteSliceReader) ReadByte() (byte, error) {
+	if len(r.b) == 0 {
+		return 0, io.EOF
+	}
+	n := r.b[0]
+	r.b = r.b[1:]
+	return n, nil
+}
+
 func acquireStacklessDeflateWriter(w io.Writer, level int) stackless.Writer {
 	nLevel := normalizeCompressLevel(level)
 	p := stacklessDeflateWriterPoolMap[nLevel]
@@ -370,7 +379,7 @@ func acquireRealDeflateWriter(w io.Writer, level int) *zlib.Writer {
 	if v == nil {
 		zw, err := zlib.NewWriterLevel(w, level)
 		if err != nil {
-			panic(fmt.Sprintf("BUG: unexpected error from zlib.NewWriterLevel(%d): %s", level, err))
+			panic(fmt.Sprintf("BUG: unexpected error from zlib.NewWriterLevel(%d): %v", level, err))
 		}
 		return zw
 	}
@@ -415,7 +424,7 @@ func isFileCompressible(f *os.File, minCompressRatio float64) bool {
 	}
 	_, err := copyZeroAlloc(zw, lr)
 	releaseStacklessGzipWriter(zw, CompressDefaultCompression)
-	f.Seek(0, 0)
+	f.Seek(0, 0) //nolint:errcheck
 	if err != nil {
 		return false
 	}

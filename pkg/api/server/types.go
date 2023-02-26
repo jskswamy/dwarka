@@ -10,11 +10,11 @@ import (
 type RequestContext interface {
 	JSONResponse(body interface{}, statusCode ...int) error
 	PostBody() []byte
-	UserValue(key string) interface{}
+	UserValue(key interface{}) interface{}
 	SetStatusCode(statusCode int)
 	SetBodyString(body string)
 	Next() error
-	SetUserValue(key string, value interface{})
+	SetUserValue(key interface{}, value interface{})
 }
 
 // ResponseHandler represents a function for responding to http request

@@ -2,7 +2,7 @@ package server
 
 import (
 	"fmt"
-	"github.com/savsgio/atreugo/v10"
+	"github.com/savsgio/atreugo/v11"
 	"gitlab.com/vedhabhavanam/smarthome/dwarka/pkg/store"
 	"net"
 	"time"
@@ -34,7 +34,7 @@ func (server HTTPServer) ListenAndServe() error {
 //
 // Serve blocks until the given listener returns permanent error.
 //
-// If use a custom Listener, will be updated your atreugo configuration
+// If we use a custom Listener, will be updated your atreugo configuration
 // with the Listener address automatically
 func (server HTTPServer) Serve(ln net.Listener) error {
 	return server.atreugo.Serve(ln)
@@ -52,26 +52,22 @@ func (server HTTPServer) filters(handlers []ResponseHandler) []atreugo.Middlewar
 
 // Path binds a route to HTTPServer for handling request
 func (server HTTPServer) Path(route Route) {
-	if route.filters == nil {
-		server.atreugo.Path(route.httpMethod, route.url, func(ctx *atreugo.RequestCtx) error {
-			return route.handler(server.store, ctx)
-		})
-		return
-	}
-	server.atreugo.PathWithFilters(route.httpMethod, route.url, func(ctx *atreugo.RequestCtx) error {
+	path := server.atreugo.Path(route.httpMethod, route.url, func(ctx *atreugo.RequestCtx) error {
 		return route.handler(server.store, ctx)
-	}, atreugo.Filters{
-		Before: server.filters(route.filters.Before),
-		After:  server.filters(route.filters.After),
 	})
 
+	if route.filters != nil {
+		path.Middlewares(atreugo.Middlewares{
+			Before: server.filters(route.filters.Before),
+			After:  server.filters(route.filters.After),
+		})
+	}
 }
 
 // NewHTTPServer returns a abstracted HTTP server
 func NewHTTPServer(host, port string, store store.Store) Server {
-	config := &atreugo.Config{
+	config := atreugo.Config{
 		Name:              "dwarka",
-		LogName:           "dwarka",
 		ReduceMemoryUsage: false,
 		Addr:              fmt.Sprintf("%s:%s", host, port),
 		GracefulShutdown:  true,
