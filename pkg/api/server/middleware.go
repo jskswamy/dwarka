@@ -10,15 +10,27 @@ const (
 	startTime = "request.startTime"
 )
 
+type handlerInfo struct {
+	method    []byte
+	path      []byte
+	startTime time.Time
+}
+
 var startMeasure = func(ctx *atreugo.RequestCtx) error {
-	ctx.SetUserValue(startTime, time.Now())
+	ctx.SetUserValue("info", handlerInfo{
+		method:    ctx.Method(),
+		path:      ctx.Path(),
+		startTime: time.Now(),
+	})
 	return ctx.Next()
 }
 
 var stopMeasure = func(ctx *atreugo.RequestCtx) error {
-	startTime := ctx.UserValue(startTime).(time.Time)
-	duration := time.Since(startTime)
-	ctx.Logger().Printf("%d - %s", ctx.Response.StatusCode(), timeUnit(duration))
+	info, ok := ctx.UserValue("info").(handlerInfo)
+	if ok {
+		duration := time.Since(info.startTime)
+		ctx.Logger().Printf("%s - %d - %s", info.path, ctx.Response.StatusCode(), timeUnit(duration))
+	}
 	return ctx.Next()
 }
 
