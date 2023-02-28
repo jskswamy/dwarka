@@ -39,3 +39,8 @@ func notFound(ctx server.RequestContext) error {
 	ctx.SetStatusCode(fasthttp.StatusNotFound)
 	return nil
 }
+
+func conflict(ctx server.RequestContext) error {
+	ctx.SetStatusCode(fasthttp.StatusConflict)
+	return nil
+}

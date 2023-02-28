@@ -96,6 +96,31 @@ func TestBuildings(t *testing.T) {
 			assert.Equal(t, fasthttp.StatusCreated, res.StatusCode)
 		})
 
+		t.Run("should get 409 if the building already exists", func(t *testing.T) {
+			ctrl := gomock.NewController(t)
+			defer ctrl.Finish()
+
+			building := gateway.Building{
+				Lat:            1.2,
+				Lan:            1.3,
+				PhysicalEntity: gateway.PhysicalEntity{Name: "building-one", Description: "test-building"},
+			}
+			buildings := gateway.Buildings{building.ID(): building}
+			mockKVStore := mockStore.NewMockStore(ctrl)
+			mockKVStore.EXPECT().Buildings().Return(buildings, nil)
+
+			data, _ := json.Marshal(building)
+
+			request, err := http.NewRequest("POST", "http://test/buildings", bytes.NewReader(data))
+			if err != nil {
+				t.Error(err)
+			}
+
+			res, err := testutils.ServeHTTPRequest(mockKVStore, request)
+			assert.NoError(t, err)
+			assert.Equal(t, fasthttp.StatusConflict, res.StatusCode)
+		})
+
 		t.Run("should handle validation error if any", func(t *testing.T) {
 			ctrl := gomock.NewController(t)
 			defer ctrl.Finish()

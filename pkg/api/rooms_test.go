@@ -95,11 +95,12 @@ func TestRooms(t *testing.T) {
 			Name:        "room one",
 			Description: "test floor",
 		}
-		rooms := gateway.Rooms{room.ID(): room}
 
 		t.Run("should create room", func(t *testing.T) {
 			ctrl := gomock.NewController(t)
 			defer ctrl.Finish()
+
+			rooms := gateway.Rooms{}
 
 			mockKVStore := mockStore.NewMockStore(ctrl)
 			mockKVStore.EXPECT().Buildings().Return(buildings, nil)
@@ -129,6 +130,29 @@ func TestRooms(t *testing.T) {
 			res, err := testutils.ServeHTTPRequest(mockKVStore, request)
 			assert.NoError(t, err)
 			assert.Equal(t, fasthttp.StatusCreated, res.StatusCode)
+		})
+
+		t.Run("should return 409 if the room already exists", func(t *testing.T) {
+			ctrl := gomock.NewController(t)
+			defer ctrl.Finish()
+
+			rooms := gateway.Rooms{room.ID(): room}
+
+			mockKVStore := mockStore.NewMockStore(ctrl)
+			mockKVStore.EXPECT().Buildings().Return(buildings, nil)
+			mockKVStore.EXPECT().Floors(building).Return(floors, nil)
+			mockKVStore.EXPECT().Rooms(floor).Return(rooms, nil)
+
+			data, _ := json.Marshal(newRoom)
+
+			request, err := http.NewRequest("POST", "http://test/buildings/building-one/floors/floor-one/rooms", bytes.NewReader(data))
+			if err != nil {
+				t.Error(err)
+			}
+
+			res, err := testutils.ServeHTTPRequest(mockKVStore, request)
+			assert.NoError(t, err)
+			assert.Equal(t, fasthttp.StatusConflict, res.StatusCode)
 		})
 
 		t.Run("should handle validation error if any", func(t *testing.T) {
@@ -216,6 +240,8 @@ func TestRooms(t *testing.T) {
 		t.Run("should handle error returned by store when saving floor", func(t *testing.T) {
 			ctrl := gomock.NewController(t)
 			defer ctrl.Finish()
+
+			rooms := gateway.Rooms{}
 
 			mockKVStore := mockStore.NewMockStore(ctrl)
 			mockKVStore.EXPECT().Buildings().Return(buildings, nil)
@@ -526,7 +552,6 @@ func TestRooms(t *testing.T) {
 			ctrl := gomock.NewController(t)
 			defer ctrl.Finish()
 
-			//building := testutils.NewBuilding("building-one")
 			mockKVStore := mockStore.NewMockStore(ctrl)
 			mockKVStore.EXPECT().Buildings().Return(buildings, nil)
 			mockKVStore.EXPECT().Floors(building).Return(floors, nil)

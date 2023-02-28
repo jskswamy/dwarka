@@ -110,6 +110,10 @@ var createFloorHandler = func(store store.Store, ctx server.RequestContext) erro
 		return internalServerError(ctx, err)
 	}
 
+	if _, ok := floors[floor.ID()]; ok {
+		return conflict(ctx)
+	}
+
 	floors[floor.ID()] = floor
 	err = store.UpsertFloors(building, floors)
 	if err != nil {

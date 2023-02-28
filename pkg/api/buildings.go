@@ -86,6 +86,10 @@ var createBuildingHandler = func(store store.Store, ctx server.RequestContext) e
 		return internalServerError(ctx, err)
 	}
 
+	if _, ok := buildings[building.ID()]; ok {
+		return conflict(ctx)
+	}
+
 	buildings[building.ID()] = building
 	err = store.UpsertBuildings(buildings)
 	if err != nil {

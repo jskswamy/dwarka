@@ -111,6 +111,10 @@ var createRoomHandler = func(store store.Store, ctx server.RequestContext) error
 		return internalServerError(ctx, err)
 	}
 
+	if _, ok := rooms[room.ID()]; ok {
+		return conflict(ctx)
+	}
+
 	rooms[room.ID()] = room
 	err = store.UpsertRooms(floor, rooms)
 	if err != nil {
