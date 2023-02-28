@@ -38,7 +38,7 @@ func init() {
 }
 
 func loadFloorsAndFloorFromContext(kvStore store.Store, ctx server.RequestContext) error {
-	err := loadBuildingAndBuildingFromContext(kvStore, ctx)
+	err := loadBuildingsAndBuildingFromContext(kvStore, ctx)
 	if err != nil {
 		return err
 	}

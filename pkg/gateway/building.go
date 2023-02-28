@@ -13,7 +13,7 @@ type Building struct {
 	PhysicalEntity
 }
 
-// Validate validate whether building has all the necessary fields
+// Validate validates whether building has all the necessary fields
 func (building Building) Validate() error {
 	return validation.ValidateStruct(&building,
 		validation.Field(&building.Name, validation.Required, validation.Length(5, 50)),

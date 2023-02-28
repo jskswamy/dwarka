@@ -33,7 +33,7 @@ func init() {
 	)
 }
 
-func loadBuildingAndBuildingFromContext(kvStore store.Store, ctx server.RequestContext) error {
+func loadBuildingsAndBuildingFromContext(kvStore store.Store, ctx server.RequestContext) error {
 	buildings, err := kvStore.Buildings()
 	if err != nil {
 		return err
@@ -55,7 +55,7 @@ func loadBuildingAndBuildingFromContext(kvStore store.Store, ctx server.RequestC
 }
 
 var findAndLoadBuilding = func(kvStore store.Store, ctx server.RequestContext) error {
-	err := loadBuildingAndBuildingFromContext(kvStore, ctx)
+	err := loadBuildingsAndBuildingFromContext(kvStore, ctx)
 	if err != nil {
 		switch err.(type) {
 		case store.NotFound:
