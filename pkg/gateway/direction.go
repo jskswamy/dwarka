@@ -1,6 +1,10 @@
 package gateway
 
-import "strings"
+import (
+	"errors"
+	"fmt"
+	"strings"
+)
 
 // Direction point to or from which a person or thing moves or faces
 type Direction int
@@ -20,15 +24,17 @@ func (direction Direction) Direction() string {
 }
 
 // NewDirection converts string direction as Direction
-func NewDirection(direction string) Direction {
+func NewDirection(direction string) (Direction, error) {
 	switch strings.ToLower(direction) {
 	case "east":
-		return DirectionEast
+		return DirectionEast, nil
 	case "south":
-		return DirectionSouth
+		return DirectionSouth, nil
 	case "west":
-		return DirectionWest
+		return DirectionWest, nil
+	case "north":
+		return DirectionNorth, nil
 	default:
-		return DirectionNorth
+		return -1, errors.New(fmt.Sprintf("direction %s not supported", direction))
 	}
 }

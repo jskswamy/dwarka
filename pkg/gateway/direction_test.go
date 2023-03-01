@@ -49,6 +49,7 @@ func TestNewDirection(t *testing.T) {
 		name      string
 		direction string
 		expected  gateway.Direction
+		error     bool
 	}
 	scenarios := []scenario{
 		{
@@ -71,13 +72,24 @@ func TestNewDirection(t *testing.T) {
 			expected:  gateway.DirectionWest,
 			direction: "west",
 		},
+		{
+			name:      "NewDirection should not convert south west",
+			expected:  -1,
+			direction: "south west",
+			error:     true,
+		},
 	}
 
 	for _, testScenario := range scenarios {
 		t.Run(testScenario.name, func(t *testing.T) {
-			actual := gateway.NewDirection(testScenario.direction)
+			actual, err := gateway.NewDirection(testScenario.direction)
 
 			assert.Equal(t, actual, testScenario.expected)
+			if testScenario.error {
+				assert.Error(t, err)
+			} else {
+				assert.NoError(t, err)
+			}
 		})
 	}
 }

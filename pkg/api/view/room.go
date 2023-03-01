@@ -15,14 +15,19 @@ type Room struct {
 }
 
 // Room converts the view.Room to device.Room
-func (room Room) Room() gateway.Room {
+func (room Room) Room() (gateway.Room, error) {
+	direction, err := gateway.NewDirection(room.Direction)
+	if err != nil {
+		return gateway.Room{}, err
+	}
+
 	return gateway.Room{
-		Direction: gateway.NewDirection(room.Direction),
+		Direction: direction,
 		PhysicalEntity: gateway.PhysicalEntity{
 			Name:        room.Name,
 			Description: room.Description,
 		},
-	}
+	}, nil
 }
 
 // Convert uses floor and []byte representing view.Room as device.Room
@@ -33,7 +38,12 @@ func Convert(floor gateway.Floor, data []byte) (gateway.Room, error) {
 		return gateway.Room{}, err
 	}
 
-	data, err = json.Marshal(room.Room())
+	r, err := room.Room()
+	if err != nil {
+		return gateway.Room{}, err
+	}
+
+	data, err = json.Marshal(r)
 	if err != nil {
 		return gateway.Room{}, err
 	}

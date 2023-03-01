@@ -93,6 +93,7 @@ func TestRoom_Room(t *testing.T) {
 		name     string
 		room     view.Room
 		expected gateway.Room
+		error    bool
 	}
 	scenarios := []scenario{
 		{
@@ -155,14 +156,35 @@ func TestRoom_Room(t *testing.T) {
 				},
 			},
 		},
+		{
+			name: "Room should not convert south west room",
+			room: view.Room{
+				Direction:   "south west",
+				Name:        "west room",
+				Description: "room facing west",
+			},
+			expected: gateway.Room{
+				Direction: 0,
+				PhysicalEntity: gateway.PhysicalEntity{
+					Name:        "",
+					Description: "",
+				},
+			},
+			error: true,
+		},
 	}
 
 	for _, testScenario := range scenarios {
 		t.Run(testScenario.name, func(t *testing.T) {
-			actual := testScenario.room.Room()
+			actual, err := testScenario.room.Room()
 
 			if !cmp.Equal(testScenario.expected, actual) {
 				assert.Fail(t, cmp.Diff(testScenario.expected, actual))
+			}
+			if testScenario.error {
+				assert.Error(t, err)
+			} else {
+				assert.NoError(t, err)
 			}
 		})
 	}
